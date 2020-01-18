@@ -130,7 +130,6 @@ const snack = {
 
 //check if snake has eaten snack
 function isEaten(){
-    console.log(snake.path[snake.path.length-1]);
     if (snake.path[snake.path.length-1][0] == snack.x && snake.path[snake.path.length-1][1] == snack.y){
         eaten = true; 
         snake.grow();
@@ -138,8 +137,8 @@ function isEaten(){
 }
 //make sure that snake eats snack nicely
 function round(number){
-    var smaller = Math.floor(number/10) * 10; 
-    var larger = smaller + 10; 
+    let smaller = Math.floor(number/10) * 10; 
+    let larger = smaller + 10; 
     return (number - smaller > larger - number)? larger : smaller; 
 }
 
@@ -151,8 +150,12 @@ function gameover(){
         state.current = state.over;
     }
 
-    //if the snake eats its tail 
-    
+    //if the snake eats itself 
+    for (i = 0; i < snake.path.length -2 ; i++){
+        if (snake.path[i][0] === snake.x && snake.path[i][1] === snake.y && snake.path.length > 2){
+            state.current = state.over; 
+        }
+    }
 
     if (state.current == state.over){
         ctx.clearRect(0,0, cvs.clientWidth,cvs.clientHeight);
@@ -206,7 +209,7 @@ function loop(){
 snake.start();
 setInterval(() => {
     loop();
-}, 200);
+}, 100);
 
 
 
