@@ -3,10 +3,7 @@ var ctx = cvs.getContext("2d");
 
 /* TO-DO
 1. implement gamestates
-2. create the snake by drawing squares on the canvas (done)
-3. make the snake move direction every second (done)
-4. make the snake grow after it eats the snack (done, ok why i cannot eat from the right side)
-5. make the snake move by adding keyboard controls (done) */
+2. make the snake grow after it eats the snack (done, ok why i cannot eat from the right side) */
 
 
 //import the image 
@@ -15,9 +12,34 @@ gameoverimg.src = "img/game over black and white.png";
 //gamestate
 const state = {
     current: 0, 
-    getready: 0, 
-    game: 1, 
-    over: 2
+    getready: () => {
+        ctx.font = '48px fantasy';
+        ctx.fillText("SNAKE", cvs.width/2 - 60, cvs.height/2);
+        ctx.font = "35px fantasy";
+        ctx.fillText("Click to play", cvs.width/2 - 90, cvs.height/2 + 60);
+        document.addEventListener("mousedown", function(event) {
+            console.log(event.clientX, event.clientY);
+            console.log(cvs.width, cvs.height)
+            if (event.clientX > cvs.width && event.clientY < cvs.height){
+                console.log('helloooo')
+                state.current === 1;
+                state.game();
+            }
+            
+        })
+    }, 
+    game: () => {
+        console.log('helo', state.current)
+        ctx.clearRect(0,0, cvs.width, cvs.height);
+        snake.start();
+        setInterval(() => {
+            loop();
+        }, 100);       
+    },
+    over: () => {
+        ctx.clearRect(0,0, cvs.clientWidth,cvs.clientHeight);
+        ctx.drawImage(gameoverimg, cvs.clientWidth/2 - 225/2, cvs.clientHeight/2 - 225/2);
+    }
 }
 
 //put all my states here 
@@ -147,19 +169,14 @@ function gameover(){
     //if snake goes out of the bounds of the canvas 
     if (snake.x < 0 || snake.x > cvs.clientWidth || 
         snake.y < 0 || snake.y > cvs.clientHeight){
-        state.current = state.over;
+            state.over();
     }
 
     //if the snake eats itself 
     for (i = 0; i < snake.path.length -2 ; i++){
         if (snake.path[i][0] === snake.x && snake.path[i][1] === snake.y && snake.path.length > 2){
-            state.current = state.over; 
+            state.over();
         }
-    }
-
-    if (state.current == state.over){
-        ctx.clearRect(0,0, cvs.clientWidth,cvs.clientHeight);
-        ctx.drawImage(gameoverimg, cvs.clientWidth/2 - 225/2, cvs.clientHeight/2 - 225/2);
     }
 }
 
@@ -206,10 +223,10 @@ function loop(){
     gameover();
 }
 
-snake.start();
-setInterval(() => {
-    loop();
-}, 100);
+if (state.current === 0){
+    state.getready();
+}
+
 
 
 
